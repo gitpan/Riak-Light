@@ -9,7 +9,7 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light::Timeout::SetSockOpt;
 {
-    $Riak::Light::Timeout::SetSockOpt::VERSION = '0.02';
+    $Riak::Light::Timeout::SetSockOpt::VERSION = '0.03';
 }
 ## use critic
 
@@ -34,7 +34,7 @@ has is_valid    => ( is => 'rw', isa      => Bool, default => sub {1} );
 sub BUILD {
     my $self = shift;
 
-    carp "This Timeout Provider is EXPERIMENTAL!";
+    # carp "This Timeout Provider is EXPERIMENTAL!";
 
     croak "no supported yet"
       if (  $Config{osname} eq 'netbsd'
@@ -42,14 +42,28 @@ sub BUILD {
         and $Config{longsize} == 4 );
     ## TODO: see https://metacpan.org/source/ZWON/RedisDB-2.12/lib/RedisDB.pm#L235
 
+    $self->_set_so_rcvtimeo();
+    $self->_set_so_sndtimeo();
+}
+
+sub _set_so_rcvtimeo {
+    my $self     = shift;
     my $seconds  = int( $self->in_timeout );
     my $useconds = int( 1_000_000 * ( $self->in_timeout - $seconds ) );
     my $timeout  = pack( 'l!l!', $seconds, $useconds );
 
     $self->socket->setsockopt( SOL_SOCKET, SO_RCVTIMEO, $timeout )
       or croak "setsockopt(SO_RCVTIMEO): $!";
-    $self->socket->setsockopt( SOL_SOCKET, SO_SNDTIMEO, $timeout )
-      or croak "setsockopt(SO_SNDTIMEO): $!";
+}
+
+sub _set_so_sndtimeo {
+    my $self     = shift;
+    my $seconds  = int( $self->out_timeout );
+    my $useconds = int( 1_000_000 * ( $self->out_timeout - $seconds ) );
+    my $timeout  = pack( 'l!l!', $seconds, $useconds );
+
+    $self->socket->setsockopt( SOL_SOCKET, SO_RCVTIMEO, $timeout )
+      or croak "setsockopt(SO_RCVTIMEO): $!";
 }
 
 around [qw(sysread syswrite)] => sub {
@@ -102,7 +116,7 @@ Riak::Light::Timeout::SetSockOpt - proxy to read/write using IO::Select as a tim
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 DESCRIPTION
 

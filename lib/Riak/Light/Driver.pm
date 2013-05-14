@@ -9,7 +9,7 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light::Driver;
 {
-    $Riak::Light::Driver::VERSION = '0.02';
+    $Riak::Light::Driver::VERSION = '0.03';
 }
 ## use critic
 
@@ -44,8 +44,7 @@ sub perform_request {
 
     my $message = pack( 'c a*', $request_code, $request_body );
 
-    $self->connector->perform_request($message)
-      or return $self->_parse_error();
+    $self->connector->perform_request($message);
 }
 
 sub read_response {
@@ -77,7 +76,7 @@ Riak::Light::Driver - Riak Driver, deal with the binary protocol
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 DESCRIPTION
 

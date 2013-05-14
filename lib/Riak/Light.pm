@@ -9,7 +9,7 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light;
 {
-    $Riak::Light::VERSION = '0.02';
+    $Riak::Light::VERSION = '0.03';
 }
 ## use critic
 
@@ -100,7 +100,7 @@ const my $ERROR_RESPONSE_CODE    => 0;
 const my $GET_RESPONSE_CODE      => 10;
 const my $GET_KEYS_RESPONSE_CODE => 18;
 
-sub CODES {
+sub _CODES {
     my $operation = shift;
 
     return {
@@ -239,8 +239,8 @@ sub _parse_response {
 
     my $operation = $args{operation};
 
-    my $request_code  = CODES($operation)->{request_code};
-    my $expected_code = CODES($operation)->{response_code};
+    my $request_code  = _CODES($operation)->{request_code};
+    my $expected_code = _CODES($operation)->{response_code};
 
     my $request_body = $args{body};
     my $extra        = $args{extra};
@@ -251,7 +251,9 @@ sub _parse_response {
     $self->driver->perform_request(
         code => $request_code,
         body => $request_body
-    ) or carp "ops... $!";    # TODO: refactor this
+      )
+      or return $self->_process_generic_error( $ERRNO, $operation, $bucket,
+        $key );
 
     my $done = !defined $callback;
     my $response;
@@ -376,7 +378,40 @@ Riak::Light - Fast and lightweight Perl client for Riak
 
 =head1 VERSION
 
-version 0.02
+version 0.03
+
+=head1 SYNOPSIS
+
+  use Riak::Light;
+
+  # create a new instance - using pbc only
+  my $client = Riak::Light->new(
+    host => '127.0.0.1',
+    port => 8087
+  );
+
+  $client->is_alive() or die "ops, riak is not alive";
+
+  # store hashref into bucket 'foo', key 'bar'
+  # will serializer as 'application/json'
+  $client->put( foo => bar => { baz => 1024 });
+
+  # store text into bucket 'foo', key 'bar'
+  $client->put( foo => baz => "sometext", 'text/plain');
+
+  # fetch hashref from bucket 'foo', key 'bar'
+  my $hash = $client->get( foo => 'bar');
+
+  # delete hashref from bucket 'foo', key 'bar'
+  $client->del(foo => 'bar');
+
+  # list keys in stream
+  $client->get_keys(foo => sub{
+     my $key = $_[0];
+
+     # you should use another client inside this callback!
+     $another_client->del(foo => $key);
+  });
 
 =head1 DESCRIPTION
 
@@ -458,6 +493,12 @@ This is a Riak::Light::Driver instance, to be able to connect and perform reques
 
 Perform a ping operation. Will return false in case of error (will store in $@).
 
+=head3 is_alive
+
+  try { $client->ping() } catch { "ops... something is wrong: $_" };
+
+Perform a ping operation. Will die in case of error.
+
 =head3 get
 
   my $value_or_reference = $client->get(bucket => 'key');
@@ -500,26 +541,6 @@ Perform a delete operation. Expects bucket and key names.
   });
 
 Perform a list keys operation. Receive a callback and will call it for each key. You can't use this callback to perform other operations!
-
-=head1 SYNOPSIS
-  use Riak::Light;
-
-  # create a new instance - using pbc only
-  my $client = Riak::Light->new(
-    host => '127.0.0.1',
-    port => 8087
-  );
-
-  try { $client->ping() };
-
-  # store hashref into bucket 'foo', key 'bar'
-  $client->put( foo => bar => { baz => 1024 }, 'application/json');
-
-  # fetch hashref from bucket 'foo', key 'bar'
-  my $hash = $client->get( foo => 'bar');
-
-  # delete hashref from bucket 'foo', key 'bar'
-  $client->del(foo => 'bar');
 
 =head1 SEE ALSO
 
