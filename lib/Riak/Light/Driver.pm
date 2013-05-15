@@ -9,7 +9,7 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light::Driver;
 {
-    $Riak::Light::Driver::VERSION = '0.03';
+    $Riak::Light::Driver::VERSION = '0.04';
 }
 ## use critic
 
@@ -24,8 +24,6 @@ has connector => ( is => 'ro', required => 1 );
 
 sub BUILDARGS {
     my ( undef, %args ) = @_;
-
-    return +{%args} if exists $args{connector};
 
     if ( exists $args{socket} ) {
         my $connector = Riak::Light::Connector->new( socket => $args{socket} );
@@ -76,19 +74,11 @@ Riak::Light::Driver - Riak Driver, deal with the binary protocol
 
 =head1 VERSION
 
-version 0.03
+version 0.04
 
 =head1 DESCRIPTION
 
   Internal class
-
-=head1 NAME
-
-  Riak::Light::Driver - Riak Driver for Riak::Light
-
-=head1 VERSION
-
-  version 0.001
 
 =head1 AUTHOR
 

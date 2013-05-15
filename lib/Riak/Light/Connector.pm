@@ -9,17 +9,13 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light::Connector;
 {
-    $Riak::Light::Connector::VERSION = '0.03';
+    $Riak::Light::Connector::VERSION = '0.04';
 }
 ## use critic
 
 use Moo;
 use MooX::Types::MooseLike::Base qw<Num Str Int Bool Object>;
 require bytes;
-
-{
-    bytes::length();
-}
 
 # ABSTRACT: Riak Connector, abstraction to deal with binary messages
 
@@ -105,19 +101,11 @@ Riak::Light::Connector - Riak Connector, abstraction to deal with binary message
 
 =head1 VERSION
 
-version 0.03
+version 0.04
 
 =head1 DESCRIPTION
 
   Internal class
-
-=head1 NAME
-
-  Riak::Light::Connetor - Riak Connector for Riak::Light
-
-=head1 VERSION
-
-  version 0.001
 
 =head1 AUTHOR
 

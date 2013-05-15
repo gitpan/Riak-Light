@@ -9,7 +9,7 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light::Timeout::SetSockOpt;
 {
-    $Riak::Light::Timeout::SetSockOpt::VERSION = '0.03';
+    $Riak::Light::Timeout::SetSockOpt::VERSION = '0.04';
 }
 ## use critic
 
@@ -17,7 +17,7 @@ use POSIX qw(ETIMEDOUT ECONNRESET);
 use Socket;
 use IO::Select;
 use Time::HiRes;
-use Config;
+use Riak::Light::Util qw(is_netbsd_6_32bits);
 use Carp;
 use Moo;
 use MooX::Types::MooseLike::Base qw<Num Str Int Bool Object>;
@@ -36,10 +36,8 @@ sub BUILD {
 
     # carp "This Timeout Provider is EXPERIMENTAL!";
 
-    croak "no supported yet"
-      if (  $Config{osname} eq 'netbsd'
-        and $Config{osvers} >= 6.0
-        and $Config{longsize} == 4 );
+    croak "NetBSD no supported yet"
+      if is_netbsd_6_32bits();
     ## TODO: see https://metacpan.org/source/ZWON/RedisDB-2.12/lib/RedisDB.pm#L235
 
     $self->_set_so_rcvtimeo();
@@ -62,8 +60,8 @@ sub _set_so_sndtimeo {
     my $useconds = int( 1_000_000 * ( $self->out_timeout - $seconds ) );
     my $timeout  = pack( 'l!l!', $seconds, $useconds );
 
-    $self->socket->setsockopt( SOL_SOCKET, SO_RCVTIMEO, $timeout )
-      or croak "setsockopt(SO_RCVTIMEO): $!";
+    $self->socket->setsockopt( SOL_SOCKET, SO_SNDTIMEO, $timeout )
+      or croak "setsockopt(SO_SNDTIMEO): $!";
 }
 
 around [qw(sysread syswrite)] => sub {
@@ -116,19 +114,11 @@ Riak::Light::Timeout::SetSockOpt - proxy to read/write using IO::Select as a tim
 
 =head1 VERSION
 
-version 0.03
+version 0.04
 
 =head1 DESCRIPTION
 
   Internal class
-
-=head1 NAME
-
-  Riak::Light::Timeout::SetSockOpt -IO Timeout based on setsockopt (Experimental) for Riak::Light
-
-=head1 VERSION
-
-  version 0.001
 
 =head1 AUTHOR
 

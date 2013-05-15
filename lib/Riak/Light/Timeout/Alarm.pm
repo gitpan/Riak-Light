@@ -9,24 +9,38 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light::Timeout::Alarm;
 {
-    $Riak::Light::Timeout::Alarm::VERSION = '0.03';
+    $Riak::Light::Timeout::Alarm::VERSION = '0.04';
 }
 ## use critic
 
 use POSIX qw(ETIMEDOUT ECONNRESET);
 use Time::HiRes qw(alarm);
-use Moo;
+use Riak::Light::Util qw(is_windows);
 use Carp;
+use Moo;
 use MooX::Types::MooseLike::Base qw<Num Str Int Bool Object>;
-
 with 'Riak::Light::Timeout';
 
-# ABSTRACT: proxy to read/write using Alarm as a timeout provider
+# ABSTRACT: proxy to read/write using Alarm as a timeout provider ( Not Safe: can clobber previous alarm )
 
 has socket      => ( is => 'ro', required => 1 );
 has in_timeout  => ( is => 'ro', isa      => Num, default => sub {0.5} );
 has out_timeout => ( is => 'ro', isa      => Num, default => sub {0.5} );
 has is_valid    => ( is => 'rw', isa      => Bool, default => sub {1} );
+
+sub BUILD {
+
+# from perldoc perlport
+# alarm:
+#  Emulated using timers that must be explicitly polled whenever
+#  Perl wants to dispatch "safe signals" and therefore cannot
+#  interrupt blocking system calls (Win32)
+
+    croak "Alarm cannot interrupt blocking system calls in Win32!"
+      if is_windows();
+
+    carp "Not Safe: can clobber previous alarm";
+}
 
 sub clean {
     my $self = shift;
@@ -103,23 +117,15 @@ sub syswrite {
 
 =head1 NAME
 
-Riak::Light::Timeout::Alarm - proxy to read/write using Alarm as a timeout provider
+Riak::Light::Timeout::Alarm - proxy to read/write using Alarm as a timeout provider ( Not Safe: can clobber previous alarm )
 
 =head1 VERSION
 
-version 0.03
+version 0.04
 
 =head1 DESCRIPTION
 
   Internal class
-
-=head1 NAME
-
-  Riak::Light::Timeout::Alarm - IO Timeout based on sig alarm + time hires for Riak::Light
-
-=head1 VERSION
-
-  version 0.001
 
 =head1 AUTHOR
 

@@ -16,7 +16,10 @@ subtest "simple get/set/delete test" => sub {
 
     my ( $host, $port ) = split ':', $ENV{RIAK_PBC_HOST};
 
-    my $client = Riak::Light->new( host => $host, port => $port );
+    my $client = Riak::Light->new(
+        host             => $host, port => $port,
+        timeout_provider => undef
+    );
 
     my $scalar = '3.14159';
     my $hash = { baz => 1024 };
@@ -58,7 +61,10 @@ subtest "get keys" => sub {
 
     my ( $host, $port ) = split ':', $ENV{RIAK_PBC_HOST};
 
-    my $client = Riak::Light->new( host => $host, port => $port );
+    my $client = Riak::Light->new(
+        host             => $host, port => $port,
+        timeout_provider => undef
+    );
 
     my @keys;
     $client->get_keys( $bucket => sub { push @keys, $_[0] } );
@@ -87,7 +93,10 @@ subtest "sequence of 1024 get/set" => sub {
 
     my ( $host, $port ) = split ':', $ENV{RIAK_PBC_HOST};
 
-    my $client = Riak::Light->new( host => $host, port => $port );
+    my $client = Riak::Light->new(
+        host             => $host, port => $port,
+        timeout_provider => undef
+    );
 
     my $hash = {
         foo       => bar  => baz     => 123,

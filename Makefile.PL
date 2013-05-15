@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 
-use 5.006;
+use 5.012;
 
 use ExtUtils::MakeMaker 6.30;
 
@@ -14,6 +14,7 @@ my %WriteMakefileArgs = (
   "BUILD_REQUIRES" => {
     "Module::Build" => "0.3601",
     "Test::Exception" => 0,
+    "Test::MockModule" => 0,
     "Test::MockObject" => 0,
     "Test::More" => 0,
     "Test::TCP" => 0
@@ -37,7 +38,7 @@ my %WriteMakefileArgs = (
     "Time::Out" => 0,
     "namespace::autoclean" => 0
   },
-  "VERSION" => "0.03",
+  "VERSION" => "0.04",
   "test" => {
     "TESTS" => "t/*.t"
   }

@@ -9,7 +9,7 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light;
 {
-    $Riak::Light::VERSION = '0.03';
+    $Riak::Light::VERSION = '0.04';
 }
 ## use critic
 
@@ -22,8 +22,9 @@ use IO::Socket;
 use Const::Fast;
 use JSON;
 use Carp;
+use feature ':5.12';
 use Moo;
-use MooX::Types::MooseLike::Base qw<Num Str Int Bool Object>;
+use MooX::Types::MooseLike::Base qw<Num Str Int Bool Maybe>;
 use namespace::autoclean;
 
 # ABSTRACT: Fast and lightweight Perl client for Riak
@@ -46,8 +47,10 @@ sub _build_out_timeout {
     (shift)->timeout;
 }
 
-has timeout_provider =>
-  ( is => 'ro', isa => Str, default => sub {'IO::Socket::INET'} );
+has timeout_provider => (
+    is => 'ro', isa => Maybe [Str],
+    default => sub {'Riak::Light::Timeout::Select'}
+);
 
 has driver => ( is => 'lazy' );
 
@@ -72,10 +75,9 @@ sub _build_socket {
     croak "Error ($!), can't connect to $host:$port"
       unless defined $socket;
 
-    return $socket
-      if $socket->isa( $self->timeout_provider );
+    return $socket unless defined $self->timeout_provider;
 
-    use Module::Load;
+    use Module::Load qw(load);
     load $self->timeout_provider;
 
     # TODO: add a easy way to inject this proxy
@@ -252,10 +254,12 @@ sub _parse_response {
         code => $request_code,
         body => $request_body
       )
-      or return $self->_process_generic_error( $ERRNO, $operation, $bucket,
-        $key );
+      or return $self->_process_generic_error(
+        $ERRNO, $operation, $bucket,
+        $key
+      );
 
-    my $done = !defined $callback;
+    my $done = $expected_code != $GET_KEYS_RESPONSE_CODE;
     my $response;
     do {
         $response = $self->driver->read_response();
@@ -265,9 +269,7 @@ sub _parse_response {
             $done = 1;
         }
         elsif ( !$done
-            && $response->{code} == $expected_code
-            && $expected_code == $GET_KEYS_RESPONSE_CODE
-            && defined $callback )
+            && $response->{code} == $GET_KEYS_RESPONSE_CODE )
         {
             my $obj = RpbListKeysResp->decode( $response->{body} );
 
@@ -321,7 +323,7 @@ sub _process_riak_fetch {
     $self->_process_generic_error( "Undefined Message", 'get', $bucket, $key )
       unless ( defined $encoded_message );
 
-    my $should_decode = ref($extra) eq 'HASH' && $extra->{decode};
+    my $should_decode   = $extra->{decode};
     my $decoded_message = RpbGetResp->decode($encoded_message);
 
     my $content = $decoded_message->content;
@@ -378,7 +380,7 @@ Riak::Light - Fast and lightweight Perl client for Riak
 
 =head1 VERSION
 
-version 0.03
+version 0.04
 
 =head1 SYNOPSIS
 
@@ -459,13 +461,17 @@ Timeout for write operations. Default is timeout value.
 
 Can change the backend for timeout. The default value is IO::Socket::INET and there is only support to connection timeout.
 IMPORTANT: in case of any timeout error, the socket between this client and the Riak server will be closed.
-To support I/O timeout you can choose 4 options:
+To support I/O timeout you can choose 5 options (or you can set undef to avoid IO Timeout):
 
 =over
 
 =item * Riak::Light::Timeout::Alarm
 
-uses Time::Out and Time::HiRes to control the I/O timeout
+uses alarm and Time::HiRes to control the I/O timeout. Does not work on Win32. (Not Safe)
+
+=item * Riak::Light::Timeout::Time::Out
+
+uses Time::Out and Time::HiRes to control the I/O timeout. Does not work on Win32. (Not Safe)
 
 =item *  Riak::Light::Timeout::Select
 
@@ -473,11 +479,11 @@ uses IO::Select to control the I/O timeout
 
 =item *  Riak::Light::Timeout::SelectOnWrite
 
-uses IO::Select to control only Output Operations
+uses IO::Select to control only Output Operations. Can block in Write Operations. Be Careful.
 
 =item *  Riak::Light::Timeout::SetSockOpt
 
-uses setsockopt to set SO_RCVTIMEO and SO_SNDTIMEO socket properties. Experimental.
+uses setsockopt to set SO_RCVTIMEO and SO_SNDTIMEO socket properties. Does not Work on NetBSD 6.0.
 
 =back
 

@@ -6,6 +6,7 @@ META.yml
 Makefile.PL
 README
 README.md
+TODO
 benchmarks/a.pl
 benchmarks/compare_all_only_get.pl
 benchmarks/compare_all_only_put.pl
@@ -22,6 +23,7 @@ lib/Riak/Light/Timeout/Select.pm
 lib/Riak/Light/Timeout/SelectOnRead.pm
 lib/Riak/Light/Timeout/SetSockOpt.pm
 lib/Riak/Light/Timeout/TimeOut.pm
+lib/Riak/Light/Util.pm
 pbc/generate.pl
 pbc/riak.proto
 perlcriticrc
@@ -34,9 +36,11 @@ t/05_driver_tests.t
 t/06_connector_tests.t
 t/07_socket_test.t
 t/08_autodie.t
-t/09_timeout_providers_basic.t
-t/10_timeout_select_on_read.t
-t/11_timeout_select.t
-t/12_timeout_alarm.t
-t/13_timeout_setsockopt.t
-t/14_timeout_time_out.t
+t/09_test_notimeout.t
+t/10_timeout_alarm.t
+t/11_timeout_Time_Out.t
+t/12_timeout_setsockopt.t
+t/13_timeout_select.t
+t/14_timeout_select_on_read.t
+t/99_test_util.t
+t/tlib/TestTimeout.pm

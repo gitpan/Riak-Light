@@ -3,7 +3,7 @@ use Test::Exception;
 use Test::MockObject;
 use Riak::Light;
 use Riak::Light::PBC;
-use POSIX qw(ETIMEDOUT);
+use POSIX qw(ETIMEDOUT strerror);
 use JSON;
 
 subtest "error handling" => sub {
@@ -52,7 +52,8 @@ subtest "ping" => sub {
         );
 
         $! = ETIMEDOUT;
-        throws_ok { $client->ping() } qr/Error in 'ping' : Operation timed/,
+        my $errmsg = strerror(ETIMEDOUT);
+        throws_ok { $client->ping() } qr/Error in 'ping' : $errmsg/,
           "should die";
         lives_ok { $client->is_alive() } "Should not die";
     };
@@ -123,8 +124,9 @@ subtest "ping" => sub {
             driver => $mock
         );
 
+        my $errmsg = strerror(ETIMEDOUT);
         throws_ok { $client->ping() }
-        qr/Error in 'ping' : Operation timed out/,
+        qr/Error in 'ping' : $errmsg/,
           "should die";
     };
 };

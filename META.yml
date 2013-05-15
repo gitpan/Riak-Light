@@ -5,6 +5,7 @@ author:
 build_requires:
   Module::Build: 0.3601
   Test::Exception: 0
+  Test::MockModule: 0
   Test::MockObject: 0
   Test::More: 0
   Test::TCP: 0
@@ -28,9 +29,9 @@ requires:
   Params::Validate: 0
   Time::Out: 0
   namespace::autoclean: 0
-  perl: 5.006
+  perl: 5.012
 resources:
   bugtracker: https://github.com/Weborama/Riak-Light/issues
   homepage: https://github.com/Weborama/Riak-Light
   repository: git://github.com///github.com/Weborama/Riak-Light.git
-version: 0.03
+version: 0.04

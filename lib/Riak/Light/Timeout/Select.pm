@@ -9,13 +9,14 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light::Timeout::Select;
 {
-    $Riak::Light::Timeout::Select::VERSION = '0.03';
+    $Riak::Light::Timeout::Select::VERSION = '0.04';
 }
 ## use critic
 
 use POSIX qw(ETIMEDOUT ECONNRESET);
 use IO::Select;
 use Time::HiRes;
+use Config;
 use Moo;
 use MooX::Types::MooseLike::Base qw<Num Str Int Bool Object>;
 
@@ -96,19 +97,11 @@ Riak::Light::Timeout::Select - proxy to read/write using IO::Select as a timeout
 
 =head1 VERSION
 
-version 0.03
+version 0.04
 
 =head1 DESCRIPTION
 
   Internal class
-
-=head1 NAME
-
-  Riak::Light::Timeout::Select -IO Timeout based on IO::Select for Riak::Light
-
-=head1 VERSION
-
-  version 0.001
 
 =head1 AUTHOR
 

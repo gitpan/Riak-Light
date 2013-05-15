@@ -9,6 +9,7 @@ my %module_build_args = (
   "build_requires" => {
     "Module::Build" => "0.3601",
     "Test::Exception" => 0,
+    "Test::MockModule" => 0,
     "Test::MockObject" => 0,
     "Test::More" => 0,
     "Test::TCP" => 0
@@ -22,7 +23,7 @@ my %module_build_args = (
     "Tiago Peczenyj <tiago.peczenyj\@gmail.com>"
   ],
   "dist_name" => "Riak-Light",
-  "dist_version" => "0.03",
+  "dist_version" => "0.04",
   "license" => "perl",
   "module_name" => "Riak::Light",
   "recommends" => {},
@@ -37,7 +38,7 @@ my %module_build_args = (
     "Params::Validate" => 0,
     "Time::Out" => 0,
     "namespace::autoclean" => 0,
-    "perl" => "5.006"
+    "perl" => "5.012"
   },
   "script_files" => []
 );

@@ -7,27 +7,38 @@
 # the same terms as the Perl 5 programming language system itself.
 #
 ## no critic (RequireUseStrict, RequireUseWarnings)
-package Riak::Light::Timeout;
+package Riak::Light::Util;
 {
-    $Riak::Light::Timeout::VERSION = '0.04';
+    $Riak::Light::Util::VERSION = '0.04';
 }
 ## use critic
+use Config;
+use Exporter 'import';
 
-use Moo::Role;
+@EXPORT_OK = qw(is_windows is_netbsd_6_32bits);
 
-# ABSTRACT: socket interface to add timeout in in/out operations
+sub is_windows {
+    $Config{osname} eq 'MSWin32';
+}
 
-requires 'sysread';
-requires 'syswrite';
+sub is_netbsd_6_32bits {
+    _is_netbsd();
+}
+
+sub _is_netbsd {
+    $Config{osname} eq 'netbsd';
+}
 
 1;
 
+
+__END__
 
 =pod
 
 =head1 NAME
 
-Riak::Light::Timeout - socket interface to add timeout in in/out operations
+Riak::Light::Util
 
 =head1 VERSION
 
@@ -49,6 +60,3 @@ This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-
-
-__END__

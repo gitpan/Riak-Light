@@ -9,13 +9,15 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light::Timeout::SelectOnRead;
 {
-    $Riak::Light::Timeout::SelectOnRead::VERSION = '0.03';
+    $Riak::Light::Timeout::SelectOnRead::VERSION = '0.04';
 }
 ## use critic
 
 use POSIX qw(ETIMEDOUT ECONNRESET);
 use IO::Select;
 use Time::HiRes;
+use Config;
+use Carp;
 use Moo;
 use MooX::Types::MooseLike::Base qw<Num Str Int Bool Object>;
 
@@ -30,6 +32,9 @@ has select => ( is => 'ro', default => sub { IO::Select->new } );
 
 sub BUILD {
     my $self = shift;
+
+    #carp "Should block in Write Operations, be careful";
+
     $self->select->add( $self->socket );
 }
 
@@ -92,7 +97,7 @@ Riak::Light::Timeout::SelectOnRead - proxy to read/write using IO::Select as a t
 
 =head1 VERSION
 
-version 0.03
+version 0.04
 
 =head1 DESCRIPTION
 
