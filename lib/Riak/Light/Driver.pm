@@ -9,7 +9,7 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light::Driver;
 {
-    $Riak::Light::Driver::VERSION = '0.04';
+    $Riak::Light::Driver::VERSION = '0.05';
 }
 ## use critic
 
@@ -60,7 +60,7 @@ sub _parse_response {
 }
 
 sub _parse_error {
-    { code => -1, body => undef, error => $ERRNO };
+    { code => -1, body => undef, error => $ERRNO || "Socket Closed" };
 }
 
 1;
@@ -74,7 +74,7 @@ Riak::Light::Driver - Riak Driver, deal with the binary protocol
 
 =head1 VERSION
 
-version 0.04
+version 0.05
 
 =head1 DESCRIPTION
 

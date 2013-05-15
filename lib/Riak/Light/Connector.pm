@@ -9,7 +9,7 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light::Connector;
 {
-    $Riak::Light::Connector::VERSION = '0.04';
+    $Riak::Light::Connector::VERSION = '0.05';
 }
 ## use critic
 
@@ -23,7 +23,6 @@ has socket => ( is => 'ro', required => 1 );
 
 sub perform_request {
     my ( $self, $message ) = @_;
-
     my $bytes = pack( 'N a*', bytes::length($message), $message );
 
     $self->_send_all($bytes);    # send request
@@ -101,7 +100,7 @@ Riak::Light::Connector - Riak Connector, abstraction to deal with binary message
 
 =head1 VERSION
 
-version 0.04
+version 0.05
 
 =head1 DESCRIPTION
 

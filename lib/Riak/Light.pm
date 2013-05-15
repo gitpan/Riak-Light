@@ -9,10 +9,11 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light;
 {
-    $Riak::Light::VERSION = '0.04';
+    $Riak::Light::VERSION = '0.05';
 }
 ## use critic
 
+use 5.012000;
 use Riak::Light::PBC;
 use Riak::Light::Driver;
 use Params::Validate qw(validate_pos SCALAR CODEREF);
@@ -22,7 +23,6 @@ use IO::Socket;
 use Const::Fast;
 use JSON;
 use Carp;
-use feature ':5.12';
 use Moo;
 use MooX::Types::MooseLike::Base qw<Num Str Int Bool Maybe>;
 use namespace::autoclean;
@@ -156,13 +156,21 @@ sub get {
     $self->_fetch( $bucket, $key, decode => 1 );
 }
 
+sub exists {
+    my ( $self, $bucket, $key ) = validate_pos( @_, 1, 1, 1 );
+    defined $self->_fetch( $bucket, $key, decode => 0, head => 1 );
+}
+
 sub _fetch {
     my ( $self, $bucket, $key, %extra ) = @_;
+
+    my $head = $extra{head};
 
     my $body = RpbGetReq->encode(
         {   r      => $self->r,
             key    => $key,
-            bucket => $bucket
+            bucket => $bucket,
+            head   => $head
         }
     );
 
@@ -380,7 +388,7 @@ Riak::Light - Fast and lightweight Perl client for Riak
 
 =head1 VERSION
 
-version 0.04
+version 0.05
 
 =head1 SYNOPSIS
 
@@ -516,6 +524,12 @@ Perform a fetch operation. Expects bucket and key names. Decode the json into a 
   my $scalar_value = $client->get_raw(bucket => 'key');
 
 Perform a fetch operation. Expects bucket and key names. Return the raw data. If you need decode the json, you should use L<get> instead.
+
+=head3 exists
+
+  $client->exists(bucket => 'key') or warn "key not found";
+
+Perform a fetch operation but with head => 0, and the if there is something stored in the bucket/key.
 
 =head3 put
 
