@@ -9,6 +9,7 @@ README.md
 TODO
 a.pl
 benchmarks/a.pl
+benchmarks/b.pl
 benchmarks/compare_all_only_get.pl
 benchmarks/compare_all_only_put.pl
 benchmarks/compare_autodie.pl
@@ -21,6 +22,7 @@ lib/Riak/Light/Driver.pm
 lib/Riak/Light/PBC.pm
 lib/Riak/Light/Timeout.pm
 lib/Riak/Light/Timeout/Alarm.pm
+lib/Riak/Light/Timeout/ByteCount.pm
 lib/Riak/Light/Timeout/Select.pm
 lib/Riak/Light/Timeout/SelectOnRead.pm
 lib/Riak/Light/Timeout/SetSockOpt.pm
