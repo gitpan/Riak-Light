@@ -9,7 +9,7 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light::PBC;
 {
-    $Riak::Light::PBC::VERSION = '0.053';
+    $Riak::Light::PBC::VERSION = '0.054';
 }
 ## use critic
 # ABSTRACT: ProtocolBuffers helper to access the Riak API
@@ -355,7 +355,7 @@ Riak::Light::PBC - ProtocolBuffers helper to access the Riak API
 
 =head1 VERSION
 
-version 0.053
+version 0.054
 
 =head1 DESCRIPTION
 

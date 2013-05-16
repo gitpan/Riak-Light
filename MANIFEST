@@ -6,7 +6,6 @@ META.yml
 Makefile.PL
 README
 README.md
-TODO
 benchmarks/compare_all_only_get.pl
 benchmarks/compare_all_only_put.pl
 benchmarks/compare_autodie.pl

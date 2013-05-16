@@ -9,7 +9,7 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light::Driver;
 {
-    $Riak::Light::Driver::VERSION = '0.053';
+    $Riak::Light::Driver::VERSION = '0.054';
 }
 ## use critic
 
@@ -74,7 +74,7 @@ Riak::Light::Driver - Riak Driver, deal with the binary protocol
 
 =head1 VERSION
 
-version 0.053
+version 0.054
 
 =head1 DESCRIPTION
 
