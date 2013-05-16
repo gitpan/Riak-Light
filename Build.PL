@@ -23,10 +23,12 @@ my %module_build_args = (
     "Tiago Peczenyj <tiago.peczenyj\@gmail.com>"
   ],
   "dist_name" => "Riak-Light",
-  "dist_version" => "0.054",
+  "dist_version" => "0.055",
   "license" => "perl",
   "module_name" => "Riak::Light",
-  "recommends" => {},
+  "recommends" => {
+    "JSON::XS" => 0
+  },
   "recursive_test_files" => 1,
   "requires" => {
     "Carp" => 0,
@@ -37,7 +39,6 @@ my %module_build_args = (
     "MooX::Types::MooseLike::Base" => 0,
     "Params::Validate" => 0,
     "Time::Out" => 0,
-    "namespace::autoclean" => 0,
     "perl" => "5.012"
   },
   "script_files" => []

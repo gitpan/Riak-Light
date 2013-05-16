@@ -9,11 +9,11 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light;
 {
-    $Riak::Light::VERSION = '0.054';
+    $Riak::Light::VERSION = '0.055';
 }
 ## use critic
 
-use 5.012000;
+use 5.008;
 use Riak::Light::PBC;
 use Riak::Light::Driver;
 use Params::Validate qw(validate_pos SCALAR CODEREF);
@@ -25,7 +25,6 @@ use JSON;
 use Carp;
 use Moo;
 use MooX::Types::MooseLike::Base qw<Num Str Int Bool Maybe>;
-use namespace::autoclean;
 
 # ABSTRACT: Fast and lightweight Perl client for Riak
 
@@ -370,6 +369,7 @@ sub _process_generic_error {
       : q();
 
     my $error_message = "Error in '$operation' $extra: $error";
+
     croak $error_message if $self->autodie;
 
     $@ = $error_message;    ## no critic (RequireLocalizedPunctuationVars)
@@ -388,7 +388,7 @@ Riak::Light - Fast and lightweight Perl client for Riak
 
 =head1 VERSION
 
-version 0.054
+version 0.055
 
 =head1 SYNOPSIS
 
@@ -406,16 +406,21 @@ version 0.054
   # will serializer as 'application/json'
   $client->put( foo => bar => { baz => 1024 });
 
-  # store text into bucket 'foo', key 'bar'
+  # store text into bucket 'foo', key 'bar' 
   $client->put( foo => baz => "sometext", 'text/plain');
+  $client->put_raw( foo => baz => "sometext");  # does not encode !
 
   # fetch hashref from bucket 'foo', key 'bar'
   my $hash = $client->get( foo => 'bar');
+  my $text = $client->get_raw( foo => 'baz');   # does not decode !
 
   # delete hashref from bucket 'foo', key 'bar'
   $client->del(foo => 'bar');
 
-  # list keys in stream
+  # check if exists (like get but using less bytes in the response)
+  $client->exists(foo => 'baz') or warn "ops, foo => bar does not exist";
+
+  # list keys in stream (callback only)
   $client->get_keys(foo => sub{
      my $key = $_[0];
 

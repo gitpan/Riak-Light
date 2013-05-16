@@ -41,5 +41,6 @@ t/11_timeout_Time_Out.t
 t/12_timeout_setsockopt.t
 t/13_timeout_select.t
 t/14_timeout_select_on_read.t
+t/99_no_namespace_autoclean.t
 t/99_test_util.t
 t/tlib/TestTimeout.pm

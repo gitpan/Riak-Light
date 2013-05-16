@@ -15,16 +15,21 @@ Fast and lightweight Perl client for Riak
     # will serializer as 'application/json'
     $client->put( foo => bar => { baz => 1024 });
     
-    # store text into bucket 'foo', key 'bar'
+    # store text into bucket 'foo', key 'bar' 
     $client->put( foo => baz => "sometext", 'text/plain');
+    $client->put_raw( foo => baz => "sometext");  # does not encode !
 
     # fetch hashref from bucket 'foo', key 'bar'
     my $hash = $client->get( foo => 'bar');
+    my $text = $client->get_raw( foo => 'baz');   # does not decode !
 
     # delete hashref from bucket 'foo', key 'bar'
     $client->del(foo => 'bar');
     
-    # list keys in stream
+    # check if exists (like get but using less bytes in the response)
+    $client->exists(foo => 'baz') or warn "ops, foo => bar does not exist";
+    
+    # list keys in stream (callback only)
     $client->get_keys(foo => sub{
        my $key = $_[0];
        
@@ -56,17 +61,17 @@ Test Coverage
 Simple Benchmark
 ================
 
-Using Perl 5.12.2 under MacOSX 10.8.3 / 4GB Ram / 2.4 GHz Intel Core 2 Duo and riak 1.3.0
+Using Perl 5.12.2 under MacOSX 10.8.3 / 4GB Ram / 2.4 GHz Intel Core 2 Duo and Riak 1.3.0 (localhost)
 
 Only GET (`benchmark/compare_all_only_get.pl`)
  
-                           Rate Data::Riak (REST) Net::Riak (REST) Riak::Tiny (REST) Data::Riak::Fast (REST) Net::Riak (PBC) Riak::Light (PBC)
-    Data::Riak (REST)        303/s                --             -29%              -38%                    -45%            -66%              -90%
-    Net::Riak (REST)         425/s               40%               --              -13%                    -23%            -53%              -86%
-    Riak::Tiny (REST)        485/s               60%              14%                --                    -12%            -46%              -84%
-    Data::Riak::Fast (REST)  553/s               82%              30%               14%                      --            -38%              -82%
-    Net::Riak (PBC)          899/s              196%             112%               85%                     62%              --              -71%
-    Riak::Light (PBC)       3125/s              930%             636%              544%                    465%            248%                --
+                             Rate Data::Riak (REST) Net::Riak (REST) Riak::Tiny (REST) Data::Riak::Fast (REST) Net::Riak (PBC) Riak::Light (PBC)
+    Data::Riak (REST)        318/s                --             -33%              -42%                    -46%            -69%              -92%
+    Net::Riak (REST)         478/s               50%               --              -12%                    -20%            -54%              -87%
+    Riak::Tiny (REST)        544/s               71%              14%                --                     -8%            -47%              -86%
+    Data::Riak::Fast (REST)  594/s               87%              24%                9%                      --            -42%              -84%
+    Net::Riak (PBC)         1031/s              224%             116%               89%                     73%              --              -73%
+    Riak::Light (PBC)       3774/s             1086%             690%              593%                    535%            266%                --               --
  
 Only PUT (`benchmark/compare_all_only_put.pl`)
 
