@@ -9,7 +9,7 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light::Connector;
 {
-    $Riak::Light::Connector::VERSION = '0.052';
+    $Riak::Light::Connector::VERSION = '0.053';
 }
 ## use critic
 
@@ -25,8 +25,6 @@ sub perform_request {
     my ( $self, $message ) = @_;
     my $bytes = pack( 'N a*', bytes::length($message), $message );
 
-    print "Size of the Request " . bytes::length($message) . "\n";
-
     $self->_send_all($bytes);    # send request
 }
 
@@ -35,8 +33,6 @@ sub read_response {
     my $lenght = $self->_read_lenght();    # read first four bytes
 
     return unless ($lenght);
-
-    print "Size of the Response $lenght\n";
 
     $self->_read_all($lenght);             # read the message
 }
@@ -104,7 +100,7 @@ Riak::Light::Connector - Riak Connector, abstraction to deal with binary message
 
 =head1 VERSION
 
-version 0.052
+version 0.053
 
 =head1 DESCRIPTION
 

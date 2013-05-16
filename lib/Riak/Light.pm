@@ -9,7 +9,7 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light;
 {
-    $Riak::Light::VERSION = '0.052';
+    $Riak::Light::VERSION = '0.053';
 }
 ## use critic
 
@@ -377,14 +377,6 @@ sub _process_generic_error {
     undef;
 }
 
-
-sub show_status {
-    my $self = shift;
-
-    print
-      "bytes in (@{[ $self->driver->connector->socket->bytes_in ]}), bytes out (@{[ $self->driver->connector->socket->bytes_out ]})\n";
-}
-
 1;
 
 
@@ -396,7 +388,7 @@ Riak::Light - Fast and lightweight Perl client for Riak
 
 =head1 VERSION
 
-version 0.052
+version 0.053
 
 =head1 SYNOPSIS
 

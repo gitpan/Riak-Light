@@ -23,7 +23,7 @@ my %module_build_args = (
     "Tiago Peczenyj <tiago.peczenyj\@gmail.com>"
   ],
   "dist_name" => "Riak-Light",
-  "dist_version" => "0.052",
+  "dist_version" => "0.053",
   "license" => "perl",
   "module_name" => "Riak::Light",
   "recommends" => {},
