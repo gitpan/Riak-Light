@@ -9,7 +9,7 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light::Util;
 {
-    $Riak::Light::Util::VERSION = '0.055';
+    $Riak::Light::Util::VERSION = '0.056';
 }
 ## use critic
 use Config;
@@ -42,7 +42,7 @@ Riak::Light::Util
 
 =head1 VERSION
 
-version 0.055
+version 0.056
 
 =head1 DESCRIPTION
 

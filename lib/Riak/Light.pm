@@ -9,7 +9,7 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light;
 {
-    $Riak::Light::VERSION = '0.055';
+    $Riak::Light::VERSION = '0.056';
 }
 ## use critic
 
@@ -112,10 +112,6 @@ sub _CODES {
         $GET_KEYS => { request_code => 17, response_code => 18 },
     }->{$operation};
 }
-
-before [qw(ping get put del)] => sub {
-    undef $@    ## no critic (RequireLocalizedPunctuationVars)
-};
 
 sub ping {
     my $self = shift;
@@ -257,6 +253,8 @@ sub _parse_response {
     my $key          = $args{key};
     my $callback     = $extra->{callback};
 
+    undef $@;    ## no critic (RequireLocalizedPunctuationVars)
+
     $self->driver->perform_request(
         code => $request_code,
         body => $request_body
@@ -388,7 +386,7 @@ Riak::Light - Fast and lightweight Perl client for Riak
 
 =head1 VERSION
 
-version 0.055
+version 0.056
 
 =head1 SYNOPSIS
 

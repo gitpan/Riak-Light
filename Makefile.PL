@@ -37,7 +37,7 @@ my %WriteMakefileArgs = (
     "Params::Validate" => 0,
     "Time::Out" => 0
   },
-  "VERSION" => "0.055",
+  "VERSION" => "0.056",
   "test" => {
     "TESTS" => "t/*.t"
   }
