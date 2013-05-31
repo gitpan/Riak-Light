@@ -9,12 +9,12 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light::Connector;
 {
-    $Riak::Light::Connector::VERSION = '0.056';
+    $Riak::Light::Connector::VERSION = '0.057';
 }
 ## use critic
 
 use Moo;
-use MooX::Types::MooseLike::Base qw<Num Str Int Bool Object>;
+use Types::Standard -types;
 require bytes;
 
 # ABSTRACT: Riak Connector, abstraction to deal with binary messages
@@ -29,16 +29,14 @@ sub perform_request {
 }
 
 sub read_response {
-    my $self   = shift;
-    my $lenght = $self->_read_lenght();    # read first four bytes
-
-    return unless ($lenght);
-
-    $self->_read_all($lenght);             # read the message
+    my ($self) = @_;
+    my $length = $self->_read_length();    # read first four bytes
+    return unless ($length);
+    $self->_read_all($length);    # read the message
 }
 
-sub _read_lenght {
-    my $self = shift;
+sub _read_length {
+    my ($self) = @_;
 
     my $first_four_bytes = $self->_read_all(4);
 
@@ -100,7 +98,7 @@ Riak::Light::Connector - Riak Connector, abstraction to deal with binary message
 
 =head1 VERSION
 
-version 0.056
+version 0.057
 
 =head1 DESCRIPTION
 

@@ -9,14 +9,14 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light::Driver;
 {
-    $Riak::Light::Driver::VERSION = '0.056';
+    $Riak::Light::Driver::VERSION = '0.057';
 }
 ## use critic
 
 use English qw( -no_match_vars );
 use Riak::Light::Connector;
 use Moo;
-use MooX::Types::MooseLike::Base qw<Num Str Int Bool Object>;
+use Types::Standard -types;
 
 # ABSTRACT: Riak Driver, deal with the binary protocol
 
@@ -46,7 +46,7 @@ sub perform_request {
 }
 
 sub read_response {
-    my $self     = shift;
+    my ($self) = @_;
     my $response = $self->connector->read_response()
       or return $self->_parse_error();
     $self->_parse_response($response);
@@ -74,7 +74,7 @@ Riak::Light::Driver - Riak Driver, deal with the binary protocol
 
 =head1 VERSION
 
-version 0.056
+version 0.057
 
 =head1 DESCRIPTION
 

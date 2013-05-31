@@ -9,22 +9,23 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light;
 {
-    $Riak::Light::VERSION = '0.056';
+    $Riak::Light::VERSION = '0.057';
 }
 ## use critic
 
-use 5.008;
+use 5.010;
 use Riak::Light::PBC;
 use Riak::Light::Driver;
-use Params::Validate qw(validate_pos SCALAR CODEREF);
+use Type::Params qw(compile);
+use Types::Standard -types;
 use English qw(-no_match_vars );
 use Scalar::Util qw(blessed);
 use IO::Socket;
 use Const::Fast;
 use JSON;
 use Carp;
+use Module::Runtime qw(use_module);
 use Moo;
-use MooX::Types::MooseLike::Base qw<Num Str Int Bool Maybe>;
 
 # ABSTRACT: Fast and lightweight Perl client for Riak
 
@@ -39,28 +40,27 @@ has in_timeout  => ( is => 'lazy' );
 has out_timeout => ( is => 'lazy' );
 
 sub _build_in_timeout {
-    (shift)->timeout;
+    $_[0]->timeout;
 }
 
 sub _build_out_timeout {
-    (shift)->timeout;
+    $_[0]->timeout;
 }
 
 has timeout_provider => (
-    is => 'ro', isa => Maybe [Str],
+    is      => 'ro',
+    isa     => Maybe [Str],
     default => sub {'Riak::Light::Timeout::Select'}
 );
 
 has driver => ( is => 'lazy' );
 
 sub _build_driver {
-    my $self = shift;
-
-    Riak::Light::Driver->new( socket => $self->_build_socket() );
+    Riak::Light::Driver->new( socket => $_[0]->_build_socket() );
 }
 
 sub _build_socket {
-    my $self = shift;
+    my ($self) = @_;
 
     my $host = $self->host;
     my $port = $self->port;
@@ -88,7 +88,7 @@ sub _build_socket {
 }
 
 sub BUILD {
-    (shift)->driver;
+    $_[0]->driver;
 }
 
 const my $PING     => 'ping';
@@ -101,35 +101,28 @@ const my $ERROR_RESPONSE_CODE    => 0;
 const my $GET_RESPONSE_CODE      => 10;
 const my $GET_KEYS_RESPONSE_CODE => 18;
 
-sub _CODES {
-    my $operation = shift;
-
-    return {
-        $PING     => { request_code => 1,  response_code => 2 },
-        $GET      => { request_code => 9,  response_code => 10 },
-        $PUT      => { request_code => 11, response_code => 12 },
-        $DEL      => { request_code => 13, response_code => 14 },
-        $GET_KEYS => { request_code => 17, response_code => 18 },
-    }->{$operation};
-}
+const my $CODES => {
+    $PING     => { request_code => 1,  response_code => 2 },
+    $GET      => { request_code => 9,  response_code => 10 },
+    $PUT      => { request_code => 11, response_code => 12 },
+    $DEL      => { request_code => 13, response_code => 14 },
+    $GET_KEYS => { request_code => 17, response_code => 18 },
+};
 
 sub ping {
-    my $self = shift;
-    $self->_parse_response(
+    $_[0]->_parse_response(
         operation => $PING,
         body      => q(),
     );
 }
 
 sub is_alive {
-    my $self = shift;
-
-    eval { $self->ping };
+    eval { $_[0]->ping };
 }
 
 sub get_keys {
-    my ( $self, $bucket, $callback ) =
-      validate_pos( @_, 1, 1, { type => CODEREF } );
+    state $check = compile( Any, Str, CodeRef );
+    my ( $self, $bucket, $callback ) = $check->(@_);
 
     my $body = RpbListKeysReq->encode( { bucket => $bucket } );
     $self->_parse_response(
@@ -142,17 +135,20 @@ sub get_keys {
 }
 
 sub get_raw {
-    my ( $self, $bucket, $key ) = validate_pos( @_, 1, 1, 1 );
+    state $check = compile( Any, Str, Str );
+    my ( $self, $bucket, $key ) = $check->(@_);
     $self->_fetch( $bucket, $key, decode => 0 );
 }
 
 sub get {
-    my ( $self, $bucket, $key ) = validate_pos( @_, 1, 1, 1 );
+    state $check = compile( Any, Str, Str );
+    my ( $self, $bucket, $key ) = $check->(@_);
     $self->_fetch( $bucket, $key, decode => 1 );
 }
 
 sub exists {
-    my ( $self, $bucket, $key ) = validate_pos( @_, 1, 1, 1 );
+    state $check = compile( Any, Str, Str );
+    my ( $self, $bucket, $key ) = $check->(@_);
     defined $self->_fetch( $bucket, $key, decode => 0, head => 1 );
 }
 
@@ -179,17 +175,16 @@ sub _fetch {
 }
 
 sub put_raw {
-    my ( $self, $bucket, $key, $value, $content_type ) = validate_pos(
-        @_, 1, 1, 1, { type => SCALAR },
-        { default => 'plain/text' }
-    );
-
+    state $check = compile( Any, Str, Str, Any, Optional [Str] );
+    my ( $self, $bucket, $key, $value, $content_type ) = $check->(@_);
+    $content_type ||= 'plain/text';
     $self->_store( $bucket, $key, $value, $content_type );
 }
 
 sub put {
-    my ( $self, $bucket, $key, $value, $content_type ) =
-      validate_pos( @_, 1, 1, 1, 1, { default => 'application/json' } );
+    state $check = compile( Any, Str, Str, Any, Optional [Str] );
+    my ( $self, $bucket, $key, $value, $content_type ) = $check->(@_);
+    $content_type ||= 'application/json';
 
     my $encoded_value =
       ( $content_type eq 'application/json' )
@@ -200,8 +195,7 @@ sub put {
 }
 
 sub _store {
-    my ( $self, $bucket, $key, $encoded_value, $content_type ) =
-      validate_pos( @_, 1, 1, 1, { type => SCALAR }, 1 );
+    my ( $self, $bucket, $key, $encoded_value, $content_type ) = @_;
 
     my $body = RpbPutReq->encode(
         {   key     => $key,
@@ -222,7 +216,8 @@ sub _store {
 }
 
 sub del {
-    my ( $self, $bucket, $key ) = validate_pos( @_, 1, 1, 1 );
+    state $check = compile( Any, Str, Str );
+    my ( $self, $bucket, $key ) = $check->(@_);
 
     my $body = RpbDelReq->encode(
         {   key    => $key,
@@ -244,8 +239,8 @@ sub _parse_response {
 
     my $operation = $args{operation};
 
-    my $request_code  = _CODES($operation)->{request_code};
-    my $expected_code = _CODES($operation)->{response_code};
+    my $request_code  = $CODES->{$operation}->{request_code};
+    my $expected_code = $CODES->{$operation}->{response_code};
 
     my $request_body = $args{body};
     my $extra        = $args{extra};
@@ -253,7 +248,8 @@ sub _parse_response {
     my $key          = $args{key};
     my $callback     = $extra->{callback};
 
-    undef $@;    ## no critic (RequireLocalizedPunctuationVars)
+    $self->autodie
+      or undef $@;    ## no critic (RequireLocalizedPunctuationVars)
 
     $self->driver->perform_request(
         code => $request_code,
@@ -277,13 +273,7 @@ sub _parse_response {
             && $response->{code} == $GET_KEYS_RESPONSE_CODE )
         {
             my $obj = RpbListKeysResp->decode( $response->{body} );
-
-            my $keys = $obj->keys;
-
-            if ($keys) {
-                $callback->($_) foreach ( @{$keys} );
-            }
-
+            $callback->($_) foreach @{ $obj->keys // [] };
             $done = $obj->done;
         }
         elsif ( !$done ) {
@@ -291,9 +281,8 @@ sub _parse_response {
         }
     } while ( !$done );
 
-    my $response_code  = $response->{code};
-    my $response_body  = $response->{body};
-    my $response_error = $response->{error};
+    my ( $response_code, $response_body, $response_error ) =
+      @{$response}{qw(code body error)};
 
     # return internal error message
     return $self->_process_generic_error(
@@ -386,7 +375,7 @@ Riak::Light - Fast and lightweight Perl client for Riak
 
 =head1 VERSION
 
-version 0.056
+version 0.057
 
 =head1 SYNOPSIS
 

@@ -27,12 +27,12 @@ requires:
   Google::ProtocolBuffers: 0
   JSON: 0
   Moo: 0
-  MooX::Types::MooseLike::Base: 0
-  Params::Validate: 0
   Time::Out: 0
+  Type::Params: 0
+  Types::Standard: 0
   perl: 5.012
 resources:
   bugtracker: https://github.com/Weborama/Riak-Light/issues
   homepage: https://github.com/Weborama/Riak-Light
-  repository: git://github.com///github.com/Weborama/Riak-Light.git
-version: 0.056
+  repository: git://github.com/Weborama/Riak-Light.git
+version: 0.057

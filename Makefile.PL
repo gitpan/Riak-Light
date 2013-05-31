@@ -33,11 +33,11 @@ my %WriteMakefileArgs = (
     "Google::ProtocolBuffers" => 0,
     "JSON" => 0,
     "Moo" => 0,
-    "MooX::Types::MooseLike::Base" => 0,
-    "Params::Validate" => 0,
-    "Time::Out" => 0
+    "Time::Out" => 0,
+    "Type::Params" => 0,
+    "Types::Standard" => 0
   },
-  "VERSION" => "0.056",
+  "VERSION" => "0.057",
   "test" => {
     "TESTS" => "t/*.t"
   }

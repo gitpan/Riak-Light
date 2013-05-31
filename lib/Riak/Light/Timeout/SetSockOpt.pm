@@ -9,7 +9,7 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light::Timeout::SetSockOpt;
 {
-    $Riak::Light::Timeout::SetSockOpt::VERSION = '0.056';
+    $Riak::Light::Timeout::SetSockOpt::VERSION = '0.057';
 }
 ## use critic
 
@@ -20,7 +20,7 @@ use Time::HiRes;
 use Riak::Light::Util qw(is_netbsd_6_32bits);
 use Carp;
 use Moo;
-use MooX::Types::MooseLike::Base qw<Num Str Int Bool Object>;
+use Types::Standard -types;
 
 with 'Riak::Light::Timeout';
 
@@ -32,7 +32,6 @@ has out_timeout => ( is => 'ro', isa      => Num, default => sub {0.5} );
 has is_valid    => ( is => 'rw', isa      => Bool, default => sub {1} );
 
 sub BUILD {
-    my $self = shift;
 
     # carp "This Timeout Provider is EXPERIMENTAL!";
 
@@ -40,51 +39,41 @@ sub BUILD {
       if is_netbsd_6_32bits();
     ## TODO: see https://metacpan.org/source/ZWON/RedisDB-2.12/lib/RedisDB.pm#L235
 
-    $self->_set_so_rcvtimeo();
-    $self->_set_so_sndtimeo();
+    $_[0]->_set_so_rcvtimeo();
+    $_[0]->_set_so_sndtimeo();
 }
 
 sub _set_so_rcvtimeo {
-    my $self     = shift;
-    my $seconds  = int( $self->in_timeout );
+    my ($self) = @_;
+    my $seconds = int( $self->in_timeout );
     my $useconds = int( 1_000_000 * ( $self->in_timeout - $seconds ) );
-    my $timeout  = pack( 'l!l!', $seconds, $useconds );
+    my $timeout = pack( 'l!l!', $seconds, $useconds );
 
     $self->socket->setsockopt( SOL_SOCKET, SO_RCVTIMEO, $timeout )
       or croak "setsockopt(SO_RCVTIMEO): $!";
 }
 
 sub _set_so_sndtimeo {
-    my $self     = shift;
-    my $seconds  = int( $self->out_timeout );
+    my ($self) = @_;
+    my $seconds = int( $self->out_timeout );
     my $useconds = int( 1_000_000 * ( $self->out_timeout - $seconds ) );
-    my $timeout  = pack( 'l!l!', $seconds, $useconds );
+    my $timeout = pack( 'l!l!', $seconds, $useconds );
 
     $self->socket->setsockopt( SOL_SOCKET, SO_SNDTIMEO, $timeout )
       or croak "setsockopt(SO_SNDTIMEO): $!";
 }
 
-around [qw(sysread syswrite)] => sub {
-    my $orig = shift;
-    my $self = shift;
-
-    if ( !$self->is_valid ) {
-        $! = ECONNRESET;    ## no critic (RequireLocalizedPunctuationVars)
-        return;
-    }
-
-    $self->$orig(@_);
-};
-
 sub clean {
-    my $self = shift;
-    $self->socket->close();
-    $self->is_valid(0);
-    $! = ETIMEDOUT;         ## no critic (RequireLocalizedPunctuationVars)
+    $_[0]->socket->close();
+    $_[0]->is_valid(0);
+    $! = ETIMEDOUT;    ## no critic (RequireLocalizedPunctuationVars)
 }
 
 sub sysread {
     my $self = shift;
+    $self->is_valid
+      or $! = ECONNRESET,
+      return;          ## no critic (RequireLocalizedPunctuationVars)
 
     my $result = $self->socket->sysread(@_);
 
@@ -95,6 +84,9 @@ sub sysread {
 
 sub syswrite {
     my $self = shift;
+    $self->is_valid
+      or $! = ECONNRESET,
+      return;    ## no critic (RequireLocalizedPunctuationVars)
 
     my $result = $self->socket->syswrite(@_);
 
@@ -114,7 +106,7 @@ Riak::Light::Timeout::SetSockOpt - proxy to read/write using IO::Select as a tim
 
 =head1 VERSION
 
-version 0.056
+version 0.057
 
 =head1 DESCRIPTION
 

@@ -23,7 +23,7 @@ my %module_build_args = (
     "Tiago Peczenyj <tiago.peczenyj\@gmail.com>"
   ],
   "dist_name" => "Riak-Light",
-  "dist_version" => "0.056",
+  "dist_version" => "0.057",
   "license" => "perl",
   "module_name" => "Riak::Light",
   "recommends" => {
@@ -36,9 +36,9 @@ my %module_build_args = (
     "Google::ProtocolBuffers" => 0,
     "JSON" => 0,
     "Moo" => 0,
-    "MooX::Types::MooseLike::Base" => 0,
-    "Params::Validate" => 0,
     "Time::Out" => 0,
+    "Type::Params" => 0,
+    "Types::Standard" => 0,
     "perl" => "5.012"
   },
   "script_files" => []
