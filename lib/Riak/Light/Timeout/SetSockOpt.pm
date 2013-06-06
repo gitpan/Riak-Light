@@ -9,7 +9,7 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light::Timeout::SetSockOpt;
 {
-    $Riak::Light::Timeout::SetSockOpt::VERSION = '0.057';
+    $Riak::Light::Timeout::SetSockOpt::VERSION = '0.058';
 }
 ## use critic
 
@@ -17,7 +17,7 @@ use POSIX qw(ETIMEDOUT ECONNRESET);
 use Socket;
 use IO::Select;
 use Time::HiRes;
-use Riak::Light::Util qw(is_netbsd_6_32bits);
+use Riak::Light::Util qw(is_netbsd_6_32bits is_solaris);
 use Carp;
 use Moo;
 use Types::Standard -types;
@@ -38,6 +38,9 @@ sub BUILD {
     croak "NetBSD no supported yet"
       if is_netbsd_6_32bits();
     ## TODO: see https://metacpan.org/source/ZWON/RedisDB-2.12/lib/RedisDB.pm#L235
+
+    croak "Solaris is not supported"
+      if is_solaris();
 
     $_[0]->_set_so_rcvtimeo();
     $_[0]->_set_so_sndtimeo();
@@ -106,15 +109,25 @@ Riak::Light::Timeout::SetSockOpt - proxy to read/write using IO::Select as a tim
 
 =head1 VERSION
 
-version 0.057
+version 0.058
 
 =head1 DESCRIPTION
 
   Internal class
 
-=head1 AUTHOR
+=head1 AUTHORS
+
+=over 4
+
+=item *
 
 Tiago Peczenyj <tiago.peczenyj@gmail.com>
+
+=item *
+
+Damien Krotkine <dams@cpan.org>
+
+=back
 
 =head1 COPYRIGHT AND LICENSE
 

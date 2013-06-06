@@ -2,6 +2,7 @@
 abstract: 'Fast and lightweight Perl client for Riak'
 author:
   - 'Tiago Peczenyj <tiago.peczenyj@gmail.com>'
+  - 'Damien Krotkine <dams@cpan.org>'
 build_requires:
   Module::Build: 0.3601
   Test::Exception: 0
@@ -34,5 +35,5 @@ requires:
 resources:
   bugtracker: https://github.com/Weborama/Riak-Light/issues
   homepage: https://github.com/Weborama/Riak-Light
-  repository: git://github.com/Weborama/Riak-Light.git
-version: 0.057
+  repository: git://github.com///github.com/Weborama/Riak-Light.git
+version: 0.058

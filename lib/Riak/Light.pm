@@ -9,7 +9,7 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light;
 {
-    $Riak::Light::VERSION = '0.057';
+    $Riak::Light::VERSION = '0.058';
 }
 ## use critic
 
@@ -34,10 +34,25 @@ has host    => ( is => 'ro', isa => Str,  required => 1 );
 has r       => ( is => 'ro', isa => Int,  default  => sub {2} );
 has w       => ( is => 'ro', isa => Int,  default  => sub {2} );
 has dw      => ( is => 'ro', isa => Int,  default  => sub {2} );
-has autodie => ( is => 'ro', isa => Bool, default  => sub {1} );
-has timeout => ( is => 'ro', isa => Num,  default  => sub {0.5} );
-has in_timeout  => ( is => 'lazy' );
-has out_timeout => ( is => 'lazy' );
+has autodie => ( is => 'ro', isa => Bool, default  => sub {1}, trigger => 1 );
+has timeout => ( is => 'ro', isa => Num, default => sub {0.5} );
+has in_timeout  => ( is => 'lazy', trigger => 1 );
+has out_timeout => ( is => 'lazy', trigger => 1 );
+
+sub _trigger_autodie {
+    my ( $self, $value ) = @_;
+    carp "autodie will be disable in the next version" unless $value;
+}
+
+sub _trigger_in_timeout {
+    carp
+      "this feature will be disabled in the next version, you should use just timeout instead";
+}
+
+sub _trigger_out_timeout {
+    carp
+      "this feature will be disabled in the next version, you should use just timeout instead";
+}
 
 sub _build_in_timeout {
     $_[0]->timeout;
@@ -375,7 +390,7 @@ Riak::Light - Fast and lightweight Perl client for Riak
 
 =head1 VERSION
 
-version 0.057
+version 0.058
 
 =head1 SYNOPSIS
 
@@ -562,9 +577,19 @@ L<Data::Riak>
 
 L<Data::Riak::Fast>
 
-=head1 AUTHOR
+=head1 AUTHORS
+
+=over 4
+
+=item *
 
 Tiago Peczenyj <tiago.peczenyj@gmail.com>
+
+=item *
+
+Damien Krotkine <dams@cpan.org>
+
+=back
 
 =head1 COPYRIGHT AND LICENSE
 
