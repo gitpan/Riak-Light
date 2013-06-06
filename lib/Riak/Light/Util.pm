@@ -9,23 +9,21 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light::Util;
 {
-    $Riak::Light::Util::VERSION = '0.058';
+    $Riak::Light::Util::VERSION = '0.059';
 }
 ## use critic
 use Config;
 use Exporter 'import';
 
-@EXPORT_OK = qw(is_windows is_netbsd_6_32bits is_solaris);
+@EXPORT_OK = qw(is_windows is_netbsd is_solaris);
+
+#ABSTRACT: util class, provides is_windows, is_solaris, etc
 
 sub is_windows {
     $Config{osname} eq 'MSWin32';
 }
 
-sub is_netbsd_6_32bits {
-    _is_netbsd();
-}
-
-sub _is_netbsd {
+sub is_netbsd {
     $Config{osname} eq 'netbsd';
 }
 
@@ -42,11 +40,11 @@ __END__
 
 =head1 NAME
 
-Riak::Light::Util
+Riak::Light::Util - util class, provides is_windows, is_solaris, etc
 
 =head1 VERSION
 
-version 0.058
+version 0.059
 
 =head1 DESCRIPTION
 
