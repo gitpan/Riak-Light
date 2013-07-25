@@ -9,7 +9,7 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light::Util;
 {
-    $Riak::Light::Util::VERSION = '0.059';
+    $Riak::Light::Util::VERSION = '0.060';
 }
 ## use critic
 use Config;
@@ -44,7 +44,7 @@ Riak::Light::Util - util class, provides is_windows, is_solaris, etc
 
 =head1 VERSION
 
-version 0.059
+version 0.060
 
 =head1 DESCRIPTION
 
