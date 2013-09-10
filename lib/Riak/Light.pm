@@ -9,7 +9,7 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light;
 {
-    $Riak::Light::VERSION = '0.060';
+    $Riak::Light::VERSION = '0.061';
 }
 ## use critic
 
@@ -467,7 +467,7 @@ Riak::Light - Fast and lightweight Perl client for Riak
 
 =head1 VERSION
 
-version 0.060
+version 0.061
 
 =head1 SYNOPSIS
 
