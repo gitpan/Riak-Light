@@ -7,7 +7,12 @@ use Module::Build 0.3601;
 
 my %module_build_args = (
   "build_requires" => {
-    "Module::Build" => "0.3601"
+    "Module::Build" => "0.3601",
+    "Test::Exception" => 0,
+    "Test::MockModule" => 0,
+    "Test::MockObject" => 0,
+    "Test::More" => 0,
+    "Test::TCP" => 0
   },
   "configure_requires" => {
     "ExtUtils::MakeMaker" => "6.30",
@@ -37,29 +42,9 @@ my %module_build_args = (
     "Types::Standard" => 0,
     "perl" => "5.012"
   },
-  "script_files" => [],
-  "test_requires" => {
-    "Test::Exception" => 0,
-    "Test::MockModule" => 0,
-    "Test::MockObject" => 0,
-    "Test::More" => 0,
-    "Test::TCP" => 0
-  }
+  "script_files" => []
 );
 
-
-unless ( eval { Module::Build->VERSION(0.4004) } ) {
-  my $tr = delete $module_build_args{test_requires};
-  my $br = $module_build_args{build_requires};
-  for my $mod ( keys %$tr ) {
-    if ( exists $br->{$mod} ) {
-      $br->{$mod} = $tr->{$mod} if $tr->{$mod} > $br->{$mod};
-    }
-    else {
-      $br->{$mod} = $tr->{$mod};
-    }
-  }
-}
 
 my $build = Module::Build->new(%module_build_args);
 
