@@ -9,7 +9,7 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light::Timeout::Alarm;
 {
-    $Riak::Light::Timeout::Alarm::VERSION = '0.071';
+    $Riak::Light::Timeout::Alarm::VERSION = '0.072';
 }
 ## use critic
 
@@ -114,7 +114,7 @@ Riak::Light::Timeout::Alarm - proxy to read/write using Alarm as a timeout provi
 
 =head1 VERSION
 
-version 0.071
+version 0.072
 
 =head1 DESCRIPTION
 

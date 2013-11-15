@@ -9,7 +9,7 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light;
 {
-    $Riak::Light::VERSION = '0.071';
+    $Riak::Light::VERSION = '0.072';
 }
 ## use critic
 
@@ -36,7 +36,8 @@ has r       => ( is => 'ro', isa => Int,  default  => sub {2} );
 has w       => ( is => 'ro', isa => Int,  default  => sub {2} );
 has dw      => ( is => 'ro', isa => Int,  default  => sub {2} );
 has autodie => ( is => 'ro', isa => Bool, default  => sub {1}, trigger => 1 );
-has timeout => ( is => 'ro', isa => Num, default => sub {0.5} );
+has timeout     => ( is => 'ro', isa => Num, default => sub {0.5} );
+has tcp_nodelay => ( is => 'ro', isa => Int, default => sub {1} );
 has in_timeout  => ( is => 'lazy', trigger => 1 );
 has out_timeout => ( is => 'lazy', trigger => 1 );
 
@@ -90,8 +91,10 @@ sub _build_socket {
     croak "Error ($!), can't connect to $host:$port"
       unless defined $socket;
 
-    $socket->setsockopt( IPPROTO_TCP, TCP_NODELAY, 1 )
-      or croak "Cannot set tcp nodelay $! ($^E)";
+    if ( $self->tcp_nodelay ) {
+        $socket->setsockopt( IPPROTO_TCP, TCP_NODELAY, 1 )
+          or croak "Cannot set tcp nodelay $! ($^E)";
+    }
 
     return $socket unless defined $self->timeout_provider;
 
@@ -511,7 +514,7 @@ Riak::Light - Fast and lightweight Perl client for Riak
 
 =head1 VERSION
 
-version 0.071
+version 0.072
 
 =head1 SYNOPSIS
 

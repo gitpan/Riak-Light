@@ -9,7 +9,7 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light::Timeout;
 {
-    $Riak::Light::Timeout::VERSION = '0.071';
+    $Riak::Light::Timeout::VERSION = '0.072';
 }
 ## use critic
 
@@ -31,7 +31,7 @@ Riak::Light::Timeout - socket interface to add timeout in in/out operations
 
 =head1 VERSION
 
-version 0.071
+version 0.072
 
 =head1 DESCRIPTION
 
