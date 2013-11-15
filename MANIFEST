@@ -12,7 +12,6 @@ benchmarks/compare_autodie.pl
 benchmarks/compare_get_exists.pl
 benchmarks/compare_timeout_providers.pl
 dist.ini
-foo
 lib/Riak/Light.pm
 lib/Riak/Light/Connector.pm
 lib/Riak/Light/Driver.pm
@@ -24,11 +23,11 @@ lib/Riak/Light/Timeout/SelectOnRead.pm
 lib/Riak/Light/Timeout/SetSockOpt.pm
 lib/Riak/Light/Timeout/TimeOut.pm
 lib/Riak/Light/Util.pm
-log_streaming_preprod.log
 pbc/generate.pl
 pbc/riak.proto
 perlcriticrc
 perltidyrc
+proxy.pl
 t/01_load.t
 t/02_class_test.t
 t/03_real_riak_test.t
@@ -44,7 +43,6 @@ t/12_timeout_setsockopt.t
 t/13_timeout_select.t
 t/14_timeout_select_on_read.t
 t/15_secondary_indexes.t
-t/99_memory_lead.t
 t/99_no_namespace_autoclean.t
 t/99_test_util.t
 t/tlib/TestTimeout.pm
