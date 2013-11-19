@@ -9,7 +9,7 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light::Timeout::TimeOut;
 {
-    $Riak::Light::Timeout::TimeOut::VERSION = '0.072';
+    $Riak::Light::Timeout::TimeOut::VERSION = '0.073';
 }
 ## use critic
 
@@ -99,7 +99,7 @@ Riak::Light::Timeout::TimeOut - proxy to read/write using Time::Out as a timeout
 
 =head1 VERSION
 
-version 0.072
+version 0.073
 
 =head1 DESCRIPTION
 

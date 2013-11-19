@@ -9,7 +9,7 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light;
 {
-    $Riak::Light::VERSION = '0.072';
+    $Riak::Light::VERSION = '0.073';
 }
 ## use critic
 
@@ -36,8 +36,8 @@ has r       => ( is => 'ro', isa => Int,  default  => sub {2} );
 has w       => ( is => 'ro', isa => Int,  default  => sub {2} );
 has dw      => ( is => 'ro', isa => Int,  default  => sub {2} );
 has autodie => ( is => 'ro', isa => Bool, default  => sub {1}, trigger => 1 );
-has timeout     => ( is => 'ro', isa => Num, default => sub {0.5} );
-has tcp_nodelay => ( is => 'ro', isa => Int, default => sub {1} );
+has timeout     => ( is => 'ro', isa => Num,  default => sub {0.5} );
+has tcp_nodelay => ( is => 'ro', isa => Bool, default => sub {1} );
 has in_timeout  => ( is => 'lazy', trigger => 1 );
 has out_timeout => ( is => 'lazy', trigger => 1 );
 
@@ -311,7 +311,7 @@ sub query_index {
       and $query_type = 1;    # range
 
     croak "query index in stream mode not supported"
-      if $extra_parameters->{stream};
+      if defined $extra_parameters && $extra_parameters->{stream};
 
     my $body = RpbIndexReq->encode(
         {   index  => $index,
@@ -335,6 +335,8 @@ sub query_index {
         bucket    => $bucket,
         operation => $QUERY_INDEX,
         body      => $body,
+        paginate  => defined $extra_parameters
+          && exists $extra_parameters->{max_results},
     );
 }
 
@@ -351,6 +353,7 @@ sub _parse_response {
     my $bucket       = $args{bucket};
     my $key          = $args{key};
     my $callback     = $args{callback};
+    my $paginate     = $args{paginate};
 
     $self->autodie
       or undef $@;    ## no critic (RequireLocalizedPunctuationVars)
@@ -429,7 +432,7 @@ sub _parse_response {
 
             my $keys = $obj->keys // [];
 
-            if (wantarray) {
+            if ( $paginate and wantarray ) {
                 return ( $keys, $obj->continuation, $obj->done );
             }
             else {
@@ -514,7 +517,7 @@ Riak::Light - Fast and lightweight Perl client for Riak
 
 =head1 VERSION
 
-version 0.072
+version 0.073
 
 =head1 SYNOPSIS
 
@@ -602,6 +605,12 @@ Timeout for read operations. Default is timeout value.
 =head3 out_timeout
 
 Timeout for write operations. Default is timeout value.
+
+=head3 tcp_nodelay
+
+Boolean, enable or disable TCP_NODELAY. If True (default), disables Nagle's Algorithm.
+
+See more in: L<http://docs.basho.com/riak/latest/dev/references/client-implementation/#Nagle-s-Algorithm>.
 
 =head3 timeout_provider
 
