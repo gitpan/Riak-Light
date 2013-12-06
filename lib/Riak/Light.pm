@@ -9,7 +9,7 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light;
 {
-    $Riak::Light::VERSION = '0.080';
+    $Riak::Light::VERSION = '0.081';
 }
 ## use critic
 
@@ -572,7 +572,7 @@ Riak::Light - Fast and lightweight Perl client for Riak
 
 =head1 VERSION
 
-version 0.080
+version 0.081
 
 =head1 SYNOPSIS
 
@@ -886,6 +886,7 @@ This is an alias for map_reduce_raw with content-type json
 Performa a map/reduce operation. Accept callback.
 
 Example:
+
   my $map_reduce_json = '{
     "inputs":"training",
     "query":[{"map":{"language":"javascript",
@@ -893,10 +894,11 @@ Example:
       var val = riakObject.values[0].data.match(/pizza/g);
       return [[riakObject.key, (val ? val.length : 0 )]];
     }"}}]}';
-
+    
   my $response = $client->map_reduce_raw($map_reduce_json, 'application/json');
 
 will return something like
+
   [
     {'response' => [['foo',1]],'phase' => 0},
     {'response' => [['bam',3]],'phase' => 0},
@@ -913,6 +915,7 @@ a hashref with response (decoded if json) and phase value. you can also pass a c
     });
 
 this callback will be called 4 times, with this response (decoded from json)
+
  [['foo', 1]]
  [['bam', 3]]
  [['bar', 4]]
