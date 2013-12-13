@@ -113,6 +113,25 @@ subtest "query 2i" => sub {
     );
 
     foreach ( 1 .. 50 ) {
+        is_deeply(
+            [   sort { $a->{value} cmp $b->{value} }
+                  @{ $client->get_all_indexes( $bucket_name => "key$_" ) }
+            ],
+            [   { key => 'index_test_field_bin',  value => 'plop' },
+                { key => 'index_test_field2_bin', value => 'plop2' },
+                { key => 'index_test_field2_bin', value => 'plop3' },
+            ],
+            "querying all indexes from key$_"
+        );
+        is_deeply(
+            $client->get_all_indexes( $bucket_name => "other_key$_" ),
+            [   { key => 'index_test_field3_int', value => $_ },
+            ],
+            "querying all indexes from other_key$_"
+        );
+    }
+
+    foreach ( 1 .. 50 ) {
         ok( $client->del( $bucket_name => "key$_" ),
             "should cleanup the key in Riak"
         );
