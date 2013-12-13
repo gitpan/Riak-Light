@@ -36,4 +36,4 @@ resources:
   bugtracker: https://github.com/Weborama/Riak-Light/issues
   homepage: https://github.com/Weborama/Riak-Light
   repository: git://github.com///github.com/Weborama/Riak-Light.git
-version: 0.083
+version: 0.084

@@ -9,7 +9,7 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light::Timeout::SetSockOpt;
 {
-    $Riak::Light::Timeout::SetSockOpt::VERSION = '0.083';
+    $Riak::Light::Timeout::SetSockOpt::VERSION = '0.084';
 }
 ## use critic
 
@@ -109,7 +109,7 @@ Riak::Light::Timeout::SetSockOpt - proxy to read/write using IO::Select as a tim
 
 =head1 VERSION
 
-version 0.083
+version 0.084
 
 =head1 DESCRIPTION
 
