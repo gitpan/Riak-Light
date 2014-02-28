@@ -45,6 +45,7 @@ t/14_timeout_select_on_read.t
 t/15_secondary_indexes.t
 t/16_map_reduce.t
 t/17_2i_map_reduce.t
+t/90_client_id.t
 t/99_memory_lead.t
 t/99_no_namespace_autoclean.t
 t/99_test_util.t

@@ -20,7 +20,7 @@ my %module_build_args = (
     "Damien Krotkine <dams\@cpan.org>"
   ],
   "dist_name" => "Riak-Light",
-  "dist_version" => "0.099",
+  "dist_version" => "0.09901",
   "license" => "perl",
   "module_name" => "Riak::Light",
   "recommends" => {
