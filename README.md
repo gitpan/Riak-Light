@@ -1,7 +1,7 @@
 Riak-Light
 ==========
 
-Fast and lightweight Perl client for Riak
+Fast and lightweight Perl client for Riak [![CPAN version](https://badge.fury.io/pl/Riak-Light.png)](http://badge.fury.io/pl/Riak-Light)
 
 ```perl
     # create a new instance - using pbc only
@@ -128,5 +128,6 @@ Features
 * support raw data (ok)
 * support list keys (ok)
 * debug/trace mode (to do)
+* vclock support (in progress)
 * refactor to use Moo::Roles instead other objects (to do)
 * extract timeout provider to an external project (to do)

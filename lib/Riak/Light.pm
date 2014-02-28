@@ -9,7 +9,7 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light;
 {
-    $Riak::Light::VERSION = '0.084';
+    $Riak::Light::VERSION = '0.099';
 }
 ## use critic
 
@@ -165,28 +165,71 @@ sub get_keys {
 }
 
 sub get_raw {
+    state $check = compile( Any, Str, Str, Optional [Bool] );
+    my ( $self, $bucket, $key, $return_all ) = $check->(@_);
+    my $response = $self->_fetch( $bucket, $key, 0 );
+
+    my $result;
+    if ( defined $response ) {
+        $result = ($return_all) ? $response : $response->{value};
+    }
+    $result;
+}
+
+sub get_full_raw {
     state $check = compile( Any, Str, Str );
     my ( $self, $bucket, $key ) = $check->(@_);
-    my $response = $self->_fetch( $bucket, $key, 0 );
-    defined $response and $response->{value};
+
+    $self->get_raw( $bucket, $key, 1 );
 }
 
 sub get {
+    state $check = compile( Any, Str, Str, Optional [Bool] );
+    my ( $self, $bucket, $key, $return_all ) = $check->(@_);
+    my $response = $self->_fetch( $bucket, $key, 1 );
+    my $result;
+    if ( defined $response ) {
+        $result = ($return_all) ? $response : $response->{value};
+    }
+    $result;
+}
+
+sub get_full {
     state $check = compile( Any, Str, Str );
     my ( $self, $bucket, $key ) = $check->(@_);
-    my $response = $self->_fetch( $bucket, $key, 1 );
-    defined $response and $response->{value};
+
+    $self->get( $bucket, $key, 1 );
 }
 
 sub get_all_indexes {
     state $check = compile( Any, Str, Str );
     my ( $self, $bucket, $key ) = $check->(@_);
-    my $response = $self->_fetch( $bucket, $key, 0 );
+    my $response = $self->_fetch( $bucket, $key, 0, 1 );
 
     return ( !defined $response )
       ? []
       : [ map { +{ value => $_->value, key => $_->key } }
           @{ $response->{indexes} // [] } ];
+}
+
+sub get_index_value {
+    state $check = compile( Any, Str, Str, Str );
+    my ( $self, $bucket, $key, $index_name ) = $check->(@_);
+
+    my @values =
+      map { $_->{value} }
+      grep { $_->{key} eq $index_name }
+      @{ $self->get_all_indexes( $bucket, $key ) };
+
+    shift @values;
+}
+
+sub get_vclock {
+    state $check = compile( Any, Str, Str );
+    my ( $self, $bucket, $key ) = $check->(@_);
+    my $response = $self->_fetch( $bucket, $key, 0, 1 );
+
+    defined $response and $response->{vclock};
 }
 
 sub exists {
@@ -218,28 +261,33 @@ sub _fetch {
 sub put_raw {
     state $check =
       compile( Any, Str, Str, Any, Optional [Str],
-        Optional [ HashRef [ Str | ArrayRef [Str] ] ] );
-    my ( $self, $bucket, $key, $value, $content_type, $indexes ) =
+        Optional [ HashRef [ Str | ArrayRef [Str] ] ], Optional [Str] );
+    my ( $self, $bucket, $key, $value, $content_type, $indexes, $vclock ) =
       $check->(@_);
     $content_type ||= 'plain/text';
-    $self->_store( $bucket, $key, $value, $content_type, $indexes );
+    $self->_store( $bucket, $key, $value, $content_type, $indexes, $vclock );
 }
 
 sub put {
     state $check =
       compile( Any, Str, Str, Any, Optional [Str],
-        Optional [ HashRef [ Str | ArrayRef [Str] ] ] );
-    my ( $self, $bucket, $key, $value, $content_type, $indexes ) =
+        Optional [ HashRef [ Str | ArrayRef [Str] ] ], Optional [Str] );
+    my ( $self, $bucket, $key, $value, $content_type, $indexes, $vclock ) =
       $check->(@_);
 
     ( $content_type ||= 'application/json' ) eq 'application/json'
       and $value = encode_json($value);
 
-    $self->_store( $bucket, $key, $value, $content_type, $indexes );
+    $self->_store( $bucket, $key, $value, $content_type, $indexes, $vclock );
 }
 
 sub _store {
-    my ( $self, $bucket, $key, $encoded_value, $content_type, $indexes ) = @_;
+    my ( $self, $bucket, $key, $encoded_value, $content_type, $indexes,
+        $vclock ) = @_;
+
+    my %extra_parameters = ();
+
+    $extra_parameters{vclock} = $vclock if $vclock;
 
     my $body = RpbPutReq->encode(
         {   key     => $key,
@@ -261,6 +309,7 @@ sub _store {
                     : ()
                 ),
             },
+            %extra_parameters,
         }
     );
 
@@ -533,6 +582,7 @@ sub _process_get_response {
             ? decode_json( $content->value )
             : $content->value,
             indexes => $content->indexes,
+            vclock  => $decoded_message->vclock,
         };
     }
 
@@ -591,7 +641,7 @@ Riak::Light - Fast and lightweight Perl client for Riak
 
 =head1 VERSION
 
-version 0.084
+version 0.099
 
 =head1 SYNOPSIS
 
@@ -762,8 +812,11 @@ Perform a ping operation. Will die in case of error.
   my $value_or_reference = $client->get(bucket => 'key');
 
 Perform a fetch operation. Expects bucket and key names. Decode the json into a
-Perl structure. if the content_type is 'application/json'. If you need the raw
+Perl structure, if the content_type is 'application/json'. If you need the raw
 data you can use L<get_raw>.
+
+There is a third argument: return_all. Default is false. If true, we will return an hashref with 3 entries: 
+value (the data decoded), indexes and vclock.
 
 =head3 get_raw
 
@@ -771,6 +824,23 @@ data you can use L<get_raw>.
 
 Perform a fetch operation. Expects bucket and key names. Return the raw data.
 If you need decode the json, you should use L<get> instead.
+
+There is a third argument: return_all. Default is false. If true, we will return an hashref with 3 entries: 
+value (the data decoded), indexes and vclock.
+
+=head3 get_full
+
+  my $value_or_reference = $client->get_full(bucket => 'key');
+
+Perform a fetch operation. Expects bucket and key names. Will return an hashref with 3 entries: 
+value (the data decoded), indexes and vclock. It is the equivalent to call get(bucket, key, 1)
+
+=head3 get_full_raw
+
+  my $scalar_value = $client->get_full_raw(bucket => 'key');
+
+Perform a fetch operation. Expects bucket and key names. Will return an hashref with 3 entries: 
+value (the raw data), indexes and vclock. It is the equivalent to call get_raw(bucket, key, 1)
 
 =head3 exists
 
@@ -792,6 +862,18 @@ Perform a fetch operation but instead return the content, return a hashref with 
   ]
 
 IMPORT: this arrayref is unsortered.
+
+=head3 get_index_value
+
+Perform a fetch operation, will return the value of the index or undef.
+
+  my $value = $client->get_index_value(bucket => key => 'index_test_field_bin');
+
+=head3 get_vclock
+
+Perform a fetch operation, will return the value of the vclock
+
+  my $vclock = $client->get_vclock(bucket => 'key');
 
 =head3 put
 

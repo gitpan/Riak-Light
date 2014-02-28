@@ -9,7 +9,7 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light::Connector;
 {
-    $Riak::Light::Connector::VERSION = '0.084';
+    $Riak::Light::Connector::VERSION = '0.099';
 }
 ## use critic
 
@@ -98,7 +98,7 @@ Riak::Light::Connector - Riak Connector, abstraction to deal with binary message
 
 =head1 VERSION
 
-version 0.084
+version 0.099
 
 =head1 DESCRIPTION
 
