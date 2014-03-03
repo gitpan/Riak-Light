@@ -9,7 +9,7 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light::Timeout::SelectOnRead;
 {
-    $Riak::Light::Timeout::SelectOnRead::VERSION = '0.09901';
+    $Riak::Light::Timeout::SelectOnRead::VERSION = '0.09911';
 }
 ## use critic
 
@@ -86,7 +86,7 @@ Riak::Light::Timeout::SelectOnRead - proxy to read/write using IO::Select as a t
 
 =head1 VERSION
 
-version 0.09901
+version 0.09911
 
 =head1 DESCRIPTION
 

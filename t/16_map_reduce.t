@@ -13,7 +13,7 @@ use Riak::Light;
 use JSON;
 
 subtest "map reduce" => sub {
-    plan tests => 5;
+    plan tests => 6;
 
     my ( $host, $port ) = split ':', $ENV{RIAK_PBC_HOST};
 
@@ -22,13 +22,18 @@ subtest "map reduce" => sub {
         timeout_provider => undef
     );
 
-    ok( $client->ping(), "should can ping" );
+    ok( $client->ping(),     "should can ping" );
+    ok( $client->is_alive(), "should be alive" );
 
-    my $keys = $client->get_keys('training');
-
-    foreach my $key ( @{$keys} ) {
+    foreach my $key ( @{ $client->get_keys('training') } ) {
         $client->del( training => $key );
     }
+
+    # FORCE DELETE!
+    $client->del( training => 'foo' );
+    $client->del( training => 'bar' );
+    $client->del( training => 'baz' );
+    $client->del( training => 'bam' );
 
     $client->put( training => foo => 'pizza data goes here',    'text/plain' );
     $client->put( training => bar => 'pizza pizza pizza pizza', 'text/plain' );
@@ -38,7 +43,7 @@ subtest "map reduce" => sub {
     my %expected = (
         'bar' => 4,
 
-#      'baz' => 0,
+        #'baz' => 0,
         'bam' => 3,
         'foo' => 1,
     );
@@ -82,9 +87,8 @@ subtest "map reduce" => sub {
           map { $_->{response}->[0]->[0] => $_->{response}->[0]->[1] }
           @{$response};
 
-        my $zero = delete $got{'baz'};
-
-        ok( !$zero, 'baz should be zero or undef' );
+        my $zero = delete $got{baz};
+        ok( !$zero, 'should return zero for baz' );
         eq_or_diff \%got, \%expected,
           "should return the proper data structure for query as: "
           . ( ( ref $json_query ) ? "reference" : "string" );
