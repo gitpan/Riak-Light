@@ -9,7 +9,7 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light::Timeout::TimeOut;
 {
-    $Riak::Light::Timeout::TimeOut::VERSION = '0.09911';
+    $Riak::Light::Timeout::TimeOut::VERSION = '0.10';
 }
 ## use critic
 
@@ -93,13 +93,15 @@ sub syswrite {
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
 Riak::Light::Timeout::TimeOut - proxy to read/write using Time::Out as a timeout provider
 
 =head1 VERSION
 
-version 0.09911
+version 0.10
 
 =head1 DESCRIPTION
 

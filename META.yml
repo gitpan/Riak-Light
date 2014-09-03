@@ -14,7 +14,7 @@ configure_requires:
   ExtUtils::MakeMaker: 6.30
   Module::Build: 0.3601
 dynamic_config: 0
-generated_by: 'Dist::Zilla version 4.300030, CPAN::Meta::Converter version 2.120921'
+generated_by: 'Dist::Zilla version 5.008, CPAN::Meta::Converter version 2.120921'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -31,9 +31,9 @@ requires:
   Time::Out: 0
   Type::Params: 0
   Types::Standard: 0
-  perl: 5.012
+  perl: v5.12.0
 resources:
   bugtracker: https://github.com/Weborama/Riak-Light/issues
   homepage: https://github.com/Weborama/Riak-Light
-  repository: git://github.com/Weborama/Riak-Light.git
-version: 0.09911
+  repository: git://github.com///www.github.com/weborama/Riak-Light.git
+version: 0.10

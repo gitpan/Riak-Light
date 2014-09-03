@@ -9,7 +9,7 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light::Driver;
 {
-    $Riak::Light::Driver::VERSION = '0.09911';
+    $Riak::Light::Driver::VERSION = '0.10';
 }
 ## use critic
 
@@ -68,13 +68,15 @@ sub _parse_error {
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
 Riak::Light::Driver - Riak Driver, deal with the binary protocol
 
 =head1 VERSION
 
-version 0.09911
+version 0.10
 
 =head1 DESCRIPTION
 

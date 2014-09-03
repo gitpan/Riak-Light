@@ -9,7 +9,7 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light::Connector;
 {
-    $Riak::Light::Connector::VERSION = '0.09911';
+    $Riak::Light::Connector::VERSION = '0.10';
 }
 ## use critic
 
@@ -92,13 +92,15 @@ sub _read_all {
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
 Riak::Light::Connector - Riak Connector, abstraction to deal with binary messages
 
 =head1 VERSION
 
-version 0.09911
+version 0.10
 
 =head1 DESCRIPTION
 

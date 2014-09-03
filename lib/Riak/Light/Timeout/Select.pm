@@ -9,7 +9,7 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light::Timeout::Select;
 {
-    $Riak::Light::Timeout::Select::VERSION = '0.09911';
+    $Riak::Light::Timeout::Select::VERSION = '0.10';
 }
 ## use critic
 
@@ -83,13 +83,15 @@ sub syswrite {
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
 Riak::Light::Timeout::Select - proxy to read/write using IO::Select as a timeout provider
 
 =head1 VERSION
 
-version 0.09911
+version 0.10
 
 =head1 DESCRIPTION
 
