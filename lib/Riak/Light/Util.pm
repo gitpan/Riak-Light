@@ -9,7 +9,7 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light::Util;
 {
-    $Riak::Light::Util::VERSION = '0.10';
+    $Riak::Light::Util::VERSION = '0.11';
 }
 ## use critic
 use Config;
@@ -38,15 +38,13 @@ __END__
 
 =pod
 
-=encoding UTF-8
-
 =head1 NAME
 
 Riak::Light::Util - util class, provides is_windows, is_solaris, etc
 
 =head1 VERSION
 
-version 0.10
+version 0.11
 
 =head1 DESCRIPTION
 

@@ -9,7 +9,7 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light;
 {
-    $Riak::Light::VERSION = '0.10';
+    $Riak::Light::VERSION = '0.11';
 }
 ## use critic
 
@@ -37,6 +37,11 @@ has host => ( is => 'ro',   isa => Str, required => 1 );
 has r    => ( is => 'ro',   isa => Int, default  => sub {2} );
 has w    => ( is => 'ro',   isa => Int, default  => sub {2} );
 has dw   => ( is => 'ro',   isa => Int, default  => sub {2} );
+
+has pr => ( is => 'ro', isa => Int, predicate => 1 );
+has pw => ( is => 'ro', isa => Int, predicate => 1 );
+has rw => ( is => 'ro', isa => Int, predicate => 1 );
+
 has autodie => ( is => 'ro', isa => Bool, default => sub {1}, trigger => 1 );
 has timeout     => ( is => 'ro', isa => Num,  default => sub {0.5} );
 has tcp_nodelay => ( is => 'ro', isa => Bool, default => sub {1} );
@@ -266,11 +271,15 @@ sub exists {
 sub _fetch {
     my ( $self, $bucket, $key, $decode, $head ) = @_;
 
+    my %extra_parameters;
+    $extra_parameters{pr} = $self->pr if $self->has_pr;
+
     my $body = RpbGetReq->encode(
         {   r      => $self->r,
             key    => $key,
             bucket => $bucket,
-            head   => $head
+            head   => $head,
+            %extra_parameters
         }
     );
 
@@ -313,6 +322,8 @@ sub _store {
     my %extra_parameters = ();
 
     $extra_parameters{vclock} = $vclock if $vclock;
+    $extra_parameters{dw}     = $self->dw;
+    $extra_parameters{pw}     = $self->pw if $self->has_pw;
 
     my $body = RpbPutReq->encode(
         {   key     => $key,
@@ -334,6 +345,7 @@ sub _store {
                     : ()
                 ),
             },
+            w => $self->w,
             %extra_parameters,
         }
     );
@@ -350,10 +362,19 @@ sub del {
     state $check = compile( Any, Str, Str );
     my ( $self, $bucket, $key ) = $check->(@_);
 
+    my %extra_parameters;
+
+    $extra_parameters{rw} = $self->rw if $self->has_rw;
+    $extra_parameters{pr} = $self->pr if $self->has_pr;
+    $extra_parameters{pw} = $self->pw if $self->has_pw;
+
     my $body = RpbDelReq->encode(
         {   key    => $key,
             bucket => $bucket,
-            rw     => $self->dw
+            r      => $self->r,
+            w      => $self->w,
+            dw     => $self->dw,
+            %extra_parameters
         }
     );
 
@@ -704,15 +725,13 @@ sub _process_generic_error {
 
 =pod
 
-=encoding UTF-8
-
 =head1 NAME
 
 Riak::Light - Fast and lightweight Perl client for Riak
 
 =head1 VERSION
 
-version 0.10
+version 0.11
 
 =head1 SYNOPSIS
 
@@ -799,6 +818,18 @@ W value setting for this client. Default 2.
 =head3 dw
 
 DW value setting for this client. Default 2.
+
+=head3 rw
+
+RW value setting for this client. Default not set ( and omit in the request)
+
+=head3 pr
+
+PR value setting for this client. Default not set ( and omit in the request)
+
+=head3 pw
+
+PW value setting for this client. Default not set ( and omit in the request)    
 
 =head3 autodie
 

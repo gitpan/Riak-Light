@@ -9,7 +9,7 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light::Timeout::Alarm;
 {
-    $Riak::Light::Timeout::Alarm::VERSION = '0.10';
+    $Riak::Light::Timeout::Alarm::VERSION = '0.11';
 }
 ## use critic
 
@@ -108,15 +108,13 @@ sub syswrite {
 
 =pod
 
-=encoding UTF-8
-
 =head1 NAME
 
 Riak::Light::Timeout::Alarm - proxy to read/write using Alarm as a timeout provider ( Not Safe: can clobber previous alarm )
 
 =head1 VERSION
 
-version 0.10
+version 0.11
 
 =head1 DESCRIPTION
 

@@ -9,7 +9,7 @@
 ## no critic (RequireUseStrict, RequireUseWarnings)
 package Riak::Light::Timeout::SetSockOpt;
 {
-    $Riak::Light::Timeout::SetSockOpt::VERSION = '0.10';
+    $Riak::Light::Timeout::SetSockOpt::VERSION = '0.11';
 }
 ## use critic
 
@@ -103,15 +103,13 @@ sub syswrite {
 
 =pod
 
-=encoding UTF-8
-
 =head1 NAME
 
 Riak::Light::Timeout::SetSockOpt - proxy to read/write using IO::Select as a timeout provider only for READ operations.
 
 =head1 VERSION
 
-version 0.10
+version 0.11
 
 =head1 DESCRIPTION
 

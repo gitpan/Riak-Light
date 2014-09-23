@@ -31,9 +31,9 @@ requires:
   Time::Out: 0
   Type::Params: 0
   Types::Standard: 0
-  perl: v5.12.0
+  perl: 5.012
 resources:
   bugtracker: https://github.com/Weborama/Riak-Light/issues
   homepage: https://github.com/Weborama/Riak-Light
-  repository: git://github.com///www.github.com/weborama/Riak-Light.git
-version: 0.10
+  repository: git://github.com/Weborama/Riak-Light.git
+version: 0.11

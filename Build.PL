@@ -20,7 +20,7 @@ my %module_build_args = (
     "Damien Krotkine <dams\@cpan.org>"
   ],
   "dist_name" => "Riak-Light",
-  "dist_version" => "0.10",
+  "dist_version" => "0.11",
   "license" => "perl",
   "module_name" => "Riak::Light",
   "recommends" => {
@@ -36,7 +36,7 @@ my %module_build_args = (
     "Time::Out" => 0,
     "Type::Params" => 0,
     "Types::Standard" => 0,
-    "perl" => "v5.12.0"
+    "perl" => "5.012"
   },
   "script_files" => [],
   "test_requires" => {
